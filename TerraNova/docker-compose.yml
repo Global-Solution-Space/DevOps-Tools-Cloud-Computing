@@ -14,7 +14,7 @@ services:
       ORACLE_PASSWORD: oracle_terranova
       APP_USER: terranova_user
       APP_USER_PASSWORD: terranova123
-      SatVeg__Token:
+      SatVegApiToken: "Bearer e97dab05-eedc-39b9-a3fd-fa83cb5fef5e"
     volumes:
       - terranova_oracle_data:/opt/oracle/oradata
     ports:
