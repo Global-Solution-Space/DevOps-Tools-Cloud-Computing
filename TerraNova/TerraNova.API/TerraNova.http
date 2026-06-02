@@ -1,0 +1,6 @@
+@TerraNova_HostAddress = http://localhost:5160
+
+GET {{TerraNova_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
