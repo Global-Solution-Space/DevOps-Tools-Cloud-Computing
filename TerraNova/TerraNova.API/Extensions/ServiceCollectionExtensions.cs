@@ -39,10 +39,10 @@ public static class ServiceCollectionExtensions
         // Repositórios especializados
         services.AddScoped<IProdutorRepository,        ProdutorRepository>();
         services.AddScoped<ITalhaoRepository,          TalhaoRepository>();
-        services.AddScoped<ISatvegRepository,          SatvegRepository>();
-        services.AddScoped<INasaPowerRepository,       NasaPowerRepository>();
         services.AddScoped<IAlertaAgricolaRepository,  AlertaAgricolaRepository>();
- 
+        services.AddScoped<IReqApiRepository,          ReqApiRepository>();
+        services.AddScoped<IDadoTemporalRepository,    DadoTemporalRepository>();
+        
         // Repositório genérico para entidades sem queries especiais
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
  
@@ -56,28 +56,26 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILocalizacaoService,    LocalizacaoService>();
         services.AddScoped<ITipoPlantacaoService,  TipoPlantacaoService>();
         services.AddScoped<ITelefoneService,       TelefoneService>();
- 
+        services.AddScoped<ITipoApiService,        TipoApiService>(); 
+        
         // Core
         services.AddScoped<IProdutorService,       ProdutorService>();
         services.AddScoped<IPropriedadeService,    PropriedadeService>();
         services.AddScoped<ITalhaoService,         TalhaoService>();
- 
-        // Dados externos
-        services.AddScoped<ISatvegService,         SatvegService>();
-        services.AddScoped<INasaPowerService,      NasaPowerService>();
- 
+        
+        // APIs externas + dados temporais
+        services.AddScoped<IReqApiService,       ReqApiService>();
+        services.AddScoped<IDadoTemporalService, DadoTemporalService>();
+        
         // Alertas
         services.AddScoped<IAlertaAgricolaService, AlertaAgricolaService>();
  
-        services.AddHttpClient<NasaPowerClient>(client => 
-        {
-            client.BaseAddress = new Uri("https://power.larc.nasa.gov");
-        });
-
-        services.AddHttpClient<SatVegClient>(client => 
-        {
-            client.BaseAddress = new Uri("https://api.cnptia.embrapa.br");
-        });
+        // Clientes HTTP
+        services.AddHttpClient<NasaPowerClient>(client =>
+            client.BaseAddress = new Uri("https://power.larc.nasa.gov"));
+ 
+        services.AddHttpClient<SatVegClient>(client =>
+            client.BaseAddress = new Uri("https://api.cnptia.embrapa.br"));
         
         return services;
     }

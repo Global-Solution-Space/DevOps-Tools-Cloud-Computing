@@ -8,6 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="Migrations\" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Terranova.Application\TerraNova.Application.csproj" />
     </ItemGroup>
 
@@ -15,21 +19,5 @@
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
         <PackageReference Include="Oracle.EntityFrameworkCore" Version="10.23.26200" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="Migration\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Remove="Migration\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="Migration\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Migrations\" />
     </ItemGroup>
 </Project>
