@@ -8,7 +8,7 @@
 services:
   oracle-db:
     image: gvenzl/oracle-xe:21-slim
-    container_name: oracle-db-rm561432
+    container_name: oracle-db
     restart: unless-stopped
     environment:
       ORACLE_PASSWORD: oracle_terranova
@@ -35,7 +35,7 @@ services:
       args:
         BUILD_CONFIGURATION: Release
     image: SEU-DOCKERHUB/terranova-api:v1
-    container_name: terranova-api-rm561432
+    container_name: terranova-api
     depends_on:
       oracle-db:
         condition: service_healthy
