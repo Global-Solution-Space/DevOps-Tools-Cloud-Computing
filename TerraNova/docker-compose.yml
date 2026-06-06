@@ -2,8 +2,6 @@
 #  Banco  : Oracle XE 21c  (gvenzl/oracle-xe:21-slim)
 #  App    : TerraNova API (.NET  |  Oracle EF Core v19 compat)
 #  Rede   : terranova_net (bridge compartilhada)
-#
-#
 
 services:
   oracle-db:

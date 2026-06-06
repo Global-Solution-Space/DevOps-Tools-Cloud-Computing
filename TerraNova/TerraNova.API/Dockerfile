@@ -2,7 +2,6 @@
 #  Localização: src/TerraNova.API/Dockerfile
 #  Build context: raiz do repositório (docker compose usa context: .)
 
-
 #  Runtime base
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 
@@ -39,7 +38,6 @@ WORKDIR /src/TerraNova.API
 RUN dotnet build TerraNova.API.csproj \
     -c $BUILD_CONFIGURATION \
     -o /app/build
-
 
 #  Publish
 FROM build AS publish
