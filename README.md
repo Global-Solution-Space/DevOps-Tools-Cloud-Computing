@@ -1,5 +1,20 @@
 # 🌾 TerraNova API - DevOps Tools & Cloud Computing
 
+
+# 👥 Integrantes da Equipe
+
+| Nome | RM |
+|------|------|
+| Enzo Okuizumi Miranda de Souza | 561432 |
+| Gustavo Keiji Okada | 563428 |
+| Lucas Barros Gouveia | 566422 |
+| Luna de Carvalho Guimarães | 562290 |
+| Milton Jakson de Sousa Marcelino | 564836 |
+
+## 📂 Repositório GitHub
+
+[Repositório GitHub](https://github.com/Global-Solution-Space/DevOps-Tools-Cloud-Computing) | [Vídeo Demonstrativo]() 
+
 ## 🚀 Descrição da Solução Proposta
 
 O **TerraNova** é uma solução tecnológica voltada para a gestão do agronegócio, permitindo o cadastro e monitoramento estruturado de **Produtores**, **Propriedades**, **Talhões** e **Tipos de Plantação**.
@@ -33,8 +48,8 @@ Abaixo está a representação da arquitetura macro da solução na nuvem, detal
 | Porta Exposta da API        | 8080                                                            |
 | Diretório de Trabalho (App) | `/terranova-app`                                                |
 | Usuário de Execução (App)   | `app` (Não-root)                                                |
-| Container da API            | `terranova-api`                                                 |
-| Container do Banco          | `oracle-db`                                                     |
+| Container da API            | `terranova-api-rm561432`                                                 |
+| Container do Banco          | `oracle-db-rm561432`                                                     |
 | Variáveis de Ambiente       | `ASPNETCORE_ENVIRONMENT`, `ConnectionStrings__TerraNovaOracle` e `SatVegApiToken` |
 
 ---
@@ -98,6 +113,249 @@ ls -la
 exit
 ```
 
+---
+
+# 🧪 Comandos CRUD
+
+Abaixo estão os comandos `curl` para exercitar a API após o `docker compose up -d --build` estar rodando. A API expõe os endpoints no prefixo `api/` e a interface interativa do Swagger está disponível em `http://localhost:8080/swagger`.
+
+> 🔁 **Ordem recomendada**: como as entidades possuem chaves estrangeiras entre si, cadastre primeiro o que não depende de ninguém e vá avançando. Use o `id` retornado em cada resposta como variável nos passos seguintes.
+
+> 🌍 Substitua `localhost:8080` pelo IP público da VM (`$PUBLIC_IP:8080`) caso esteja executando no Azure.
+
+## 1️⃣ Criar um Tipo de Plantação (sem dependências)
+
+```bash
+# CREATE
+curl -X POST http://localhost:8080/api/tipoplantacao \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tipoPlant": "Soja"
+  }'
+# → retorna 201 Created com o JSON do recurso e o campo "id"
+
+# READ ALL
+curl http://localhost:8080/api/tipoplantacao
+
+# READ BY ID
+curl http://localhost:8080/api/tipoplantacao/<id>
+
+# UPDATE
+curl -X PUT http://localhost:8080/api/tipoplantacao/<id> \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tipoPlant": "Soja Transgênica"
+  }'
+
+# DELETE
+curl -X DELETE http://localhost:8080/api/tipoplantacao/<id>
+```
+
+## 2️⃣ Criar uma Localização (sem dependências)
+
+```bash
+# CREATE
+curl -X POST http://localhost:8080/api/localizacao \
+  -H "Content-Type: application/json" \
+  -d '{
+    "latitude":  -23.5505,
+    "longitude": -46.6333
+  }'
+# → guarda o "id" retornado (será usado em Propriedade e Talhão)
+
+# READ ALL
+curl http://localhost:8080/api/localizacao
+
+# READ BY ID
+curl http://localhost:8080/api/localizacao/<id>
+
+# UPDATE
+curl -X PUT http://localhost:8080/api/localizacao/<id> \
+  -H "Content-Type: application/json" \
+  -d '{
+    "latitude":  -22.9068,
+    "longitude": -43.1729
+  }'
+
+# DELETE
+curl -X DELETE http://localhost:8080/api/localizacao/<id>
+```
+
+## 3️⃣ Criar um Produtor (depende apenas de si mesmo; já cadastra o telefone)
+
+```bash
+# CREATE (cadastra produtor + telefone na mesma chamada)
+curl -X POST http://localhost:8080/api/produtor \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome":   "João da Silva",
+    "email":  "joao.silva@terranova.com",
+    "senha":  "senha123",
+    "telefoneContato": "11987654321"
+  }'
+# → guarda o "id" retornado (será usado em Propriedade)
+
+# READ ALL
+curl http://localhost:8080/api/produtor
+
+# READ BY ID
+curl http://localhost:8080/api/produtor/<id>
+
+# READ BY EMAIL
+curl "http://localhost:8080/api/produtor/by-email?email=joao.silva@terranova.com"
+
+# UPDATE
+curl -X PUT http://localhost:8080/api/produtor/<id> \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome":   "João da Silva Jr.",
+    "email":  "joao.jr@terranova.com",
+    "senha":  "novaSenha123",
+    "telefoneContato": "11999998888"
+  }'
+
+# DELETE
+curl -X DELETE http://localhost:8080/api/produtor/<id>
+```
+
+## 4️⃣ Criar uma Propriedade (depende de um Produtor + uma Localização)
+
+```bash
+# CREATE
+curl -X POST http://localhost:8080/api/propriedade \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome":         "Fazenda Boa Vista",
+    "tamanhoTotal": 150.75,
+    "produtorId":   "<produtor-id>",
+    "localizacaoId":"<localizacao-id>"
+  }'
+# → guarda o "id" retornado (será usado em Talhão)
+
+# READ ALL
+curl http://localhost:8080/api/propriedade
+
+# READ BY ID
+curl http://localhost:8080/api/propriedade/<id>
+
+# READ BY PRODUTOR
+curl http://localhost:8080/api/propriedade/by-produtor/<produtor-id>
+
+# UPDATE
+curl -X PUT http://localhost:8080/api/propriedade/<id> \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome":         "Fazenda Boa Vista - Sede",
+    "tamanhoTotal": 175.00,
+    "produtorId":   "<produtor-id>",
+    "localizacaoId":"<localizacao-id>"
+  }'
+
+# DELETE
+curl -X DELETE http://localhost:8080/api/propriedade/<id>
+```
+
+## 5️⃣ Criar um Talhão (depende de TipoPlantação + Propriedade + Localização)
+
+```bash
+# CREATE
+curl -X POST http://localhost:8080/api/talhao \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nomeTalhao":       "Talhão 01 - Soja",
+    "volumArea":        45.50,
+    "tipoPlantacaoId":  "<tipo-plantacao-id>",
+    "propriedadeId":    "<propriedade-id>",
+    "localizacaoId":    "<localizacao-id>"
+  }'
+
+# READ ALL
+curl http://localhost:8080/api/talhao
+
+# READ BY ID
+curl http://localhost:8080/api/talhao/<id>
+
+# READ BY PROPRIEDADE
+curl http://localhost:8080/api/talhao/by-propriedade/<propriedade-id>
+
+# READ BY TIPO PLANTACAO
+curl http://localhost:8080/api/talhao/by-tipo-plantacao/<tipo-plantacao-id>
+
+# UPDATE
+curl -X PUT http://localhost:8080/api/talhao/<id> \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nomeTalhao":       "Talhão 01 - Soja (Renomeado)",
+    "volumArea":        50.00,
+    "tipoPlantacaoId":  "<tipo-plantacao-id>",
+    "propriedadeId":    "<propriedade-id>",
+    "localizacaoId":    "<localizacao-id>"
+  }'
+
+# DELETE
+curl -X DELETE http://localhost:8080/api/talhao/<id>
+```
+
+## 📋 Tabela Resumo de Endpoints
+
+## Tabela tipo_plantacao
+
+| Verbo     | Rota                                              | Descrição                              |
+| --------- | ------------------------------------------------- | -------------------------------------- |
+| `GET`     | `/api/tipoplantacao`                              | Lista todos os tipos de plantação      |
+| `GET`     | `/api/tipoplantacao/{id}`                         | Busca tipo de plantação por ID         |
+| `POST`    | `/api/tipoplantacao`                              | Cria um tipo de plantação              |
+| `PUT`     | `/api/tipoplantacao/{id}`                         | Atualiza um tipo de plantação          |
+| `DELETE`  | `/api/tipoplantacao/{id}`                         | Remove um tipo de plantação            |
+
+## Tabela localizacao
+
+| Verbo     | Rota                                              | Descrição                              |
+| --------- | ------------------------------------------------- | -------------------------------------- |
+| `GET`     | `/api/localizacao`                                | Lista todas as localizações            |
+| `GET`     | `/api/localizacao/{id}`                           | Busca localização por ID               |
+| `POST`    | `/api/localizacao`                                | Cria uma localização                   |
+| `PUT`     | `/api/localizacao/{id}`                           | Atualiza uma localização               |
+| `DELETE`  | `/api/localizacao/{id}`                           | Remove uma localização                 |
+
+## Tabela produtor
+
+| Verbo     | Rota                                              | Descrição                              |
+| --------- | ------------------------------------------------- | -------------------------------------- |
+| `GET`     | `/api/produtor`                                   | Lista todos os produtores              |
+| `GET`     | `/api/produtor/{id}`                              | Busca produtor por ID                  |
+| `GET`     | `/api/produtor/by-email?email={email}`            | Busca produtor por e-mail              |
+| `POST`    | `/api/produtor`                                   | Cria um produtor (com telefone)        |
+| `PUT`     | `/api/produtor/{id}`                              | Atualiza um produtor                   |
+| `DELETE`  | `/api/produtor/{id}`                              | Remove um produtor                     |
+
+## Tabela propriedade
+
+| Verbo     | Rota                                              | Descrição                              |
+| --------- | ------------------------------------------------- | -------------------------------------- |
+| `GET`     | `/api/propriedade`                                | Lista todas as propriedades            |
+| `GET`     | `/api/propriedade/{id}`                           | Busca propriedade por ID               |
+| `GET`     | `/api/propriedade/by-produtor/{produtorId}`       | Lista propriedades de um produtor      |
+| `POST`    | `/api/propriedade`                                | Cria uma propriedade                   |
+| `PUT`     | `/api/propriedade/{id}`                           | Atualiza uma propriedade               |
+| `DELETE`  | `/api/propriedade/{id}`                           | Remove uma propriedade                 |
+
+## Tabela talhao
+
+| Verbo     | Rota                                              | Descrição                              |
+| --------- | ------------------------------------------------- | -------------------------------------- |
+| `GET`     | `/api/talhao`                                     | Lista todos os talhões                 |
+| `GET`     | `/api/talhao/{id}`                                | Busca talhão por ID                    |
+| `GET`     | `/api/talhao/by-propriedade/{propriedadeId}`      | Lista talhões de uma propriedade       |
+| `GET`     | `/api/talhao/by-tipo-plantacao/{tipoPlantacaoId}` | Lista talhões de um tipo de plantação  |
+| `POST`    | `/api/talhao`                                     | Cria um talhão                         |
+| `PUT`     | `/api/talhao/{id}`                                | Atualiza um talhão                     |
+| `DELETE`  | `/api/talhao/{id}`                                | Remove um talhão                       |
+
+> 💡 **Dica**: você também pode usar a interface gráfica do Swagger em `http://localhost:8080/swagger` para testar todas as rotas com formulários automáticos.
+
+---
+
 ## 📌 Validação do Banco de Dados e Persistência (Oracle)
 
 Acesse o terminal do container do banco de dados para validar o relacionamento do CRUD de gestão agrícola:
@@ -115,27 +373,3 @@ SELECT * FROM PRODUTOR;
 SELECT * FROM PROPRIEDADE;
 SELECT * FROM TALHAO;
 ```
-
----
-
-# 🎥 Entregáveis
-
-## 📂 Repositório GitHub
-
-https://github.com/Global-Solution-Space/DevOps-Tools-Cloud-Computing
-
-## 🎬 Vídeo Demonstrativo (YouTube)
-
-> [COLOQUE O LINK DO VÍDEO AQUI]
-
----
-
-# 👥 Integrantes da Equipe
-
-| Nome | RM |
-|------|------|
-| Enzo Okuizumi Miranda de Souza | 561432 |
-| Gustavo Keiji Okada | 563428 |
-| Lucas Barros Gouveia | 566422 |
-| Luna de Carvalho Guimarães | 562290 |
-| Milton Jakson de Sousa Marcelino | 564836 |
