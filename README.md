@@ -27,7 +27,7 @@ Executa a API do TerraNova utilizando diretrizes de segurança, operando com usu
 
 ### 🗄️ Container do Banco de Dados (DB)
 
-Executa o Oracle Database, persistindo as informações de todo o ecossistema agrícola em um volume nomeado, garantindo a integridade dos dados independente do ciclo de vida do container.
+Executa o **PostgreSQL 16 com PostGIS 3.4** (imagem `postgis/postgis:16-3.4`), persistindo as informações de todo o ecossistema agrícola em um volume nomeado, garantindo a integridade dos dados independente do ciclo de vida do container. A extensão PostGIS é habilitada automaticamente no primeiro start via `sql/00_postgis_extension.sql`.
 
 ---
 
@@ -44,13 +44,21 @@ Abaixo está a representação da arquitetura macro da solução na nuvem, detal
 | Configuração                | Valor                                                           |
 | --------------------------- | --------------------------------------------------------------- |
 | Linguagem/Framework         | C# / .NET 10 (ASP.NET Core)                                     |
-| Banco de Dados              | Oracle Database XE 21c (`gvenzl/oracle-xe:21-slim`)             |
+| Banco de Dados              | PostgreSQL 16 + PostGIS 3.4 (`postgis/postgis:16-3.4`)         |
 | Porta Exposta da API        | 8080                                                            |
+| Porta Exposta do Banco      | 5432                                                            |
 | Diretório de Trabalho (App) | `/terranova-app`                                                |
 | Usuário de Execução (App)   | `app` (Não-root)                                                |
-| Container da API            | `terranova-api-rm561432`                                                 |
-| Container do Banco          | `oracle-db-rm561432`                                                     |
-| Variáveis de Ambiente       | `ASPNETCORE_ENVIRONMENT`, `ConnectionStrings__TerraNovaOracle` e `SatVegApiToken` |
+| Container da API            | `terranova-api-rm561432`                                        |
+| Container do Banco          | `postgres-db-rm561432`                                          |
+| Variáveis de Ambiente       | `ASPNETCORE_ENVIRONMENT`, `ConnectionStrings__TerraNovaPostgres` e `SatVegApiToken` |
+
+### Por que PostgreSQL + PostGIS (e não Oracle Spatial)?
+
+- **Instalação trivial** no Docker: a imagem `postgis/postgis:16-3.4` já vem com a extensão PostGIS pré-instalada. Sem necessidade de instalar nada manualmente nem configurar `MDSYS`/`USER_SDO_GEOM_METADATA` no schema.
+- **Integração nativa com .NET**: o provider `Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite` mapeia o tipo `NetTopologySuite.Geometries.Point` para `geometry(Point, 4326)` **automaticamente**, e o EF Core gera a coluna PostGIS na migration sem nenhum script SQL manual.
+- **Performance**: PostGIS é reconhecido mundialmente como o motor espacial mais rápido e eficiente. É o padrão de mercado para startups, aplicações cloud-native e grandes sistemas de GIS.
+- **Custo**: 100% open-source. Oracle Enterprise com Spatial é caríssimo.
 
 ---
 
@@ -60,7 +68,7 @@ Siga as instruções abaixo para realizar o deploy da aplicação e do banco de 
 
 ## 1️⃣ Clonar o Repositório
 
-Abra o terminal e execute o comando abaixo para baixar o projeto diretamente da organização da Global Solution:
+Abra o terminal e execute o comando abaixo para baixar o projeto:
 
 ```bash
 git clone https://github.com/Global-Solution-Space/DevOps-Tools-Cloud-Computing.git
@@ -70,17 +78,28 @@ cd TerraNova
 
 > ℹ️ O `docker-compose.yml` está versionado dentro da pasta `TerraNova/`, por isso entramos nela antes de executar os comandos do Docker.
 
-## 2️⃣ Executar a Solução em Segundo Plano (Background)
-
-Para construir a imagem da API .NET e subir o banco de dados Oracle simultaneamente na mesma rede, execute:
+## 2️⃣ Subir Postgres+PostGIS e a API
 
 ```bash
 docker compose up -d --build
 ```
 
-## 3️⃣ Exibir os Logs dos Containers
+Na **primeira execução**, o container `postgres-db-rm561432`:
+1. Cria o banco `terranova` com usuário `terranova_user`.
+2. Executa automaticamente o script `sql/00_postgis_extension.sql` (mapeado em `/docker-entrypoint-initdb.d/`) que faz `CREATE EXTENSION IF NOT EXISTS postgis;`.
 
-Para garantir que a API iniciou corretamente e o Oracle finalizou o setup inicial, visualize os logs:
+## 3️⃣ Gerar a migration inicial (Npgsql/PostGIS)
+
+A migration Oracle foi removida. Gere a nova migration compatível com PostgreSQL/PostGIS **uma única vez** (ela é commitada no repositório):
+
+```bash
+# Dentro de TerraNova/
+dotnet ef migrations add Initial --project TerraNova.Infrastructure --startup-project TerraNova.API --output-dir Migrations
+```
+
+> 💡 Se a porta 5432 do host já estiver ocupada (porque o `postgres-db` está rodando), aponte o `dotnet ef` para `localhost:5432` e use a connection string de `appsettings.json` (já aponta para `Host=localhost;Port=5432;Database=terranova;Username=terranova_user;Password=terranova123;`).
+
+## 4️⃣ Exibir os Logs dos Containers
 
 ```bash
 docker compose logs -f
@@ -566,20 +585,34 @@ curl -fsS -X DELETE "$API_URL/api/tipoplantacao/$TIPO_PLANTACAO_ID"
 
 ---
 
-## 📌 Validação do Banco de Dados e Persistência (Oracle)
+## 📌 Validação do Banco de Dados e Persistência (PostgreSQL + PostGIS)
 
-Acesse o terminal do container do banco de dados para validar o relacionamento do CRUD de gestão agrícola:
+Acesse o terminal do container do banco para validar o relacionamento do CRUD de gestão agrícola e testar as funções espaciais do PostGIS:
 
 ```bash
-# Acessa o container do banco (nome definido no docker-compose: oracle-db)
-docker container exec -it oracle-db-rm561432 bash
+# Acessa o container do banco (nome definido no docker-compose: postgres-db)
+docker container exec -it postgres-db-rm561432 bash
 
-# Acesse o SQL*Plus do Oracle
-# (credenciais configuradas no docker-compose: terranova_user / terranova123)
-sqlplus terranova_user/terranova123@//localhost:1521/XEPDB1
+# Acessa o psql (credenciais configuradas no docker-compose: terranova_user / terranova123)
+psql -U terranova_user -d terranova
 
-# Execute consultas para comprovar o relacionamento do domínio agrícola
-SELECT * FROM PRODUTOR;
-SELECT * FROM PROPRIEDADE;
-SELECT * FROM TALHAO;
+# Confirma que a extensão PostGIS está habilitada
+\dx postgis
+
+# Lista as tabelas e confirma que a coluna 'coordenadas' é geometry(Point, 4326)
+\d localizacao
+
+# Comprova o relacionamento do domínio agrícola
+SELECT * FROM produtor;
+SELECT * FROM propriedade;
+SELECT * FROM talhao;
+
+# Consulta espacial: devolve a coordenada (longitude, latitude) em texto
+SELECT id_localizacao, ST_AsText(coordenadas) FROM localizacao;
+
+# Função espacial do PostGIS: distância em metros entre duas localizações
+SELECT ST_DistanceSphere(
+    (SELECT coordenadas FROM localizacao LIMIT 1),
+    (SELECT coordenadas FROM localizacao OFFSET 1 LIMIT 1)
+) AS distancia_metros;
 ```

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #  TerraNova — Provisionamento de Infraestrutura Azure
 #  Projeto: Monitoramento Agrícola com NASA Power + SatVeg
-#  Banco  : Oracle XE 21c   |   App: .NET (TerraNova API)
+#  Banco  : PostgreSQL 16 + PostGIS 3.4   |   App: .NET (TerraNova API)
 
 set -e
 
@@ -56,7 +56,7 @@ az vm create \
 echo "[5/6] Liberando portas necessárias..."
 az vm open-port --resource-group "$RG" --name "$VM" --port 22   --priority 1000
 az vm open-port --resource-group "$RG" --name "$VM" --port 8080 --priority 1010
-az vm open-port --resource-group "$RG" --name "$VM" --port 1521 --priority 1020
+az vm open-port --resource-group "$RG" --name "$VM" --port 5432 --priority 1020
 
 # Instalar Docker e Dependências na VM
 echo "[6/6] Instalando Docker e dependências na VM..."
@@ -130,5 +130,5 @@ echo "  IP Público da VM  : $PUBLIC_IP"
 echo "  Acesse via SSH    : ssh $ADMIN@$PUBLIC_IP"
 echo "  API (após deploy) : http://$PUBLIC_IP:8080"
 echo "  Swagger           : http://$PUBLIC_IP:8080"
-echo "  Oracle (externo)  : $PUBLIC_IP:1521  (SID: XE / PDB: XEPDB1)"
+echo "  Postgres (externo): $PUBLIC_IP:5432  (db: terranova / user: terranova_user)"
 echo "======================================================"

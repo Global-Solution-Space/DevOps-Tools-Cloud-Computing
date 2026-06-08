@@ -15,19 +15,19 @@ namespace TerraNova.API.Extensions;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>Registra o <see cref="TerraNovaContext"/> com Oracle.</summary>
+    /// <summary>Registra o <see cref="TerraNovaContext"/> com PostgreSQL + PostGIS.</summary>
     /// <exception cref="InvalidOperationException">Quando a connection string não for encontrada.</exception>
     public static IServiceCollection AddTerraNovaDbContext(
         this IServiceCollection services,
         IConfiguration configuration,
-        string connectionStringName = "TerraNovaOracle")
+        string connectionStringName = "TerraNovaPostgres")
     {
         var connectionString = configuration.GetConnectionString(connectionStringName)
             ?? throw new InvalidOperationException(
                 $"Connection string '{connectionStringName}' não encontrada.");
  
         services.AddDbContext<TerraNovaContext>(options =>
-            options.UseOracle(connectionString, b => b.UseNetTopologySuite()));
+            options.UseNpgsql(connectionString, b => b.UseNetTopologySuite()));
  
         return services;
     }

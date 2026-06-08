@@ -29,7 +29,7 @@ public sealed class AlertaAgricolaConfiguration : IEntityTypeConfiguration<Alert
 
         builder.Property(a => a.Resolvido)
             .HasColumnName("resolvido")
-            .HasColumnType("CHAR(1)")
+            .HasColumnType("varchar(1)")
             .HasConversion<string>(
                 v => v ? "1" : "0",
                 v => v == "1")

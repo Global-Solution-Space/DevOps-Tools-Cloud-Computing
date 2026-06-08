@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Parâmetro consultado em uma requisição externa.
-/// Persiste como string (HasConversion) para respeitar o CHECK do Oracle.
+/// Persiste como string (HasConversion) para respeitar o CHECK do banco.
 /// </summary>
 public enum TipoParamReqApi
 {

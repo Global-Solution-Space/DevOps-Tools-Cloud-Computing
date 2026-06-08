@@ -19,7 +19,7 @@ public sealed class PropriedadeService(
         return p is null ? null : PropriedadeResponse.FromDomain(p);
     }
 
-    // Filtro feito pelo Oracle via WHERE — não carrega tudo em memória
+    // Filtro feito pelo banco via WHERE — não carrega tudo em memória
     public IReadOnlyList<PropriedadeResponse> GetByProdutorId(Guid produtorId) =>
         propriedadeRepository.GetByProdutorId(produtorId)
             .Select(PropriedadeResponse.FromDomain)

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Oracle.ManagedDataAccess.Client;
+using Npgsql;
 using TerraNova.Domain.Exceptions;
 
 namespace TerraNova.API.Exceptions;
@@ -50,7 +50,7 @@ public sealed class GlobalExceptionHandler(
         InvalidOperationException e  => (StatusCodes.Status400BadRequest,  "Não foi possível concluir a operação", e.Message),
         KeyNotFoundException e       => (StatusCodes.Status404NotFound,    "Recurso não encontrado",               e.Message),
         UnauthorizedAccessException e=> (StatusCodes.Status401Unauthorized,"Não autorizado",                       e.Message),
-        OracleException e            => (StatusCodes.Status502BadGateway,  "Banco de dados indisponível",          e.Message),
+        PostgresException e          => (StatusCodes.Status502BadGateway,  "Banco de dados indisponível",          e.Message),
         _                            => MapUnhandled(environment, exception)
     };
  
