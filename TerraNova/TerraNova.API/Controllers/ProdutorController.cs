@@ -4,13 +4,14 @@ using TerraNova.Application.Services.Interfaces;
 
 namespace TerraNova.API.Controllers;
 
-/// <summary>Produtores rurais. Senha nunca é exposta nas respostas.</summary>
+/// <summary>Gerenciamento de produtores rurais.</summary>
+[Tags("Produtor")]
 [Route("api/[controller]")]
 [ApiController]
 [Produces("application/json")]
 public class ProdutorController(IProdutorService produtorService) : ControllerBase
 {
-    /// <summary>Lista todos os produtores cadastrados.</summary>
+    /// <summary>Lista todos os produtores</summary>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<ProdutorResponse>), StatusCodes.Status200OK)]
     public IActionResult GetAll() => Ok(produtorService.GetAll());
@@ -46,6 +47,24 @@ public class ProdutorController(IProdutorService produtorService) : ControllerBa
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
  
+    /// <summary>Atualiza um produtor pelo ID.</summary>
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(ProdutorResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult Update(Guid id, [FromBody] ProdutorRequest request)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        try
+        {
+            return Ok(produtorService.Update(id, request));
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+    }
+
     /// <summary>Remove um produtor pelo ID.</summary>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

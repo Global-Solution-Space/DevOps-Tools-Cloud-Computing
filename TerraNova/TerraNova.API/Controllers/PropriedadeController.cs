@@ -4,13 +4,14 @@ using TerraNova.Application.Services.Interfaces;
 
 namespace TerraNova.API.Controllers;
 
-/// <summary>Propriedades rurais. Pertencem a um Produtor e possuem Localização exclusiva.</summary>
+/// <summary>Gerenciamento de propriedades rurais.</summary>
+[Tags("Propriedade")]
 [Route("api/[controller]")]
 [ApiController]
 [Produces("application/json")]
 public class PropriedadeController(IPropriedadeService propriedadeService) : ControllerBase
 {
-    /// <summary>Lista todas as propriedades cadastradas.</summary>
+    /// <summary>Lista todas as propriedades</summary>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<PropriedadeResponse>), StatusCodes.Status200OK)]
     public IActionResult GetAll() => Ok(propriedadeService.GetAll());
@@ -25,7 +26,7 @@ public class PropriedadeController(IPropriedadeService propriedadeService) : Con
         return p is null ? NotFound() : Ok(p);
     }
  
-    /// <summary>Lista todas as propriedades de um produtor específico.</summary>
+    /// <summary>Buscar por Propriedades por Produtor</summary>
     [HttpGet("by-produtor/{produtorId:guid}")]
     [ProducesResponseType(typeof(IReadOnlyList<PropriedadeResponse>), StatusCodes.Status200OK)]
     public IActionResult GetByProdutor(Guid produtorId) =>
@@ -42,6 +43,24 @@ public class PropriedadeController(IPropriedadeService propriedadeService) : Con
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
  
+    /// <summary>Atualiza uma propriedade pelo ID.</summary>
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(PropriedadeResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult Update(Guid id, [FromBody] PropriedadeRequest request)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        try
+        {
+            return Ok(propriedadeService.Update(id, request));
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+    }
+
     /// <summary>Remove uma propriedade pelo ID.</summary>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

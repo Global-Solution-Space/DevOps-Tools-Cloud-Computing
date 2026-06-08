@@ -4,7 +4,8 @@ using TerraNova.Application.Services.Interfaces;
 
 namespace TerraNova.API.Controllers;
 
-/// <summary>Tipos de plantação (tabela de domínio). Ex.: Soja, Milho, Café.</summary>
+/// <summary>Gerenciamento dos tipos de culturas.</summary>
+[Tags("Tipo de Plantação")]
 [Route("api/[controller]")]
 [ApiController]
 [Produces("application/json")]
@@ -36,6 +37,24 @@ public class TipoPlantacaoController(ITipoPlantacaoService tipoPlantacaoService)
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
  
+    /// <summary>Atualiza um tipo de plantação pelo ID.</summary>
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(TipoPlantacaoResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult Update(Guid id, [FromBody] TipoPlantacaoRequest request)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        try
+        {
+            return Ok(tipoPlantacaoService.Update(id, request));
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+    }
+
     /// <summary>Remove um tipo de plantação pelo ID.</summary>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using NetTopologySuite;
 using TerraNova.Application.Repositories;
 using TerraNova.Application.Services.Implementations;
 using TerraNova.Application.Services.Interfaces;
@@ -26,9 +27,7 @@ public static class ServiceCollectionExtensions
                 $"Connection string '{connectionStringName}' não encontrada.");
  
         services.AddDbContext<TerraNovaContext>(options =>
-            options.UseOracle(connectionString, b =>
-                b.UseOracleSQLCompatibility(
-                    Microsoft.EntityFrameworkCore.OracleSQLCompatibility.DatabaseVersion19)));
+            options.UseOracle(connectionString, b => b.UseNetTopologySuite()));
  
         return services;
     }
@@ -38,6 +37,7 @@ public static class ServiceCollectionExtensions
     {
         // Repositórios especializados
         services.AddScoped<IProdutorRepository,        ProdutorRepository>();
+        services.AddScoped<IPropriedadeRepository,     PropriedadeRepository>();
         services.AddScoped<ITalhaoRepository,          TalhaoRepository>();
         services.AddScoped<IAlertaAgricolaRepository,  AlertaAgricolaRepository>();
         services.AddScoped<IReqApiRepository,          ReqApiRepository>();
@@ -72,10 +72,10 @@ public static class ServiceCollectionExtensions
  
         // Clientes HTTP
         services.AddHttpClient<NasaPowerClient>(client =>
-            client.BaseAddress = new Uri("https://power.larc.nasa.gov"));
+            client.BaseAddress = new Uri("https://power.larc.nasa.gov/api/"));
  
         services.AddHttpClient<SatVegClient>(client =>
-            client.BaseAddress = new Uri("https://api.cnptia.embrapa.br"));
+            client.BaseAddress = new Uri("https://api.cnptia.embrapa.br/satveg/v2"));
         
         return services;
     }

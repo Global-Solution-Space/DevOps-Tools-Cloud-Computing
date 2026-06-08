@@ -1,4 +1,4 @@
-﻿using TerraNova.Domain.Common;
+using TerraNova.Domain.Common;
 using TerraNova.Domain.Enums;
 using TerraNova.Domain.Exceptions;
 
@@ -56,6 +56,12 @@ public sealed class AlertaAgricola : BaseEntity
  
         Resolvido = true;
     }
- 
-    public void AtualizarNivel(NivelAlerta novoNivel) => NivelAlerta = novoNivel;
+
+    public void Reabrir()
+    {
+        if (!Resolvido)
+            throw new DomainException("Este alerta já está aberto.");
+
+        Resolvido = false;
+    }
 }

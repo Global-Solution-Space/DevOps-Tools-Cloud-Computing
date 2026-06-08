@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using TerraNova.Application.Repositories;
 using TerraNova.Domain.Common;
 
@@ -12,8 +12,8 @@ public class Repository<T>(TerraNovaContext context) : IRepository<T> where T : 
  
     private const string PropriedadeNome = "Nome";
  
-    public IReadOnlyList<T> GetAll() =>
-        _set.OrderBy(e => e.Id).ToList();
+    public virtual IReadOnlyList<T> GetAll() =>
+        _set.AsNoTracking().OrderBy(e => e.Id).ToList();
  
     public virtual T? GetById(Guid id) =>
         _set.Find(id);
@@ -34,6 +34,17 @@ public class Repository<T>(TerraNovaContext context) : IRepository<T> where T : 
         return entity;
     }
  
+    public T Update(Guid id, T entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+        var existing = _set.Find(id)
+            ?? throw new InvalidOperationException($"Entidade do tipo '{typeof(T).Name}' com Id {id} não encontrada.");
+        Context.Entry(existing).CurrentValues.SetValues(entity);
+        Context.Entry(existing).Property(e => e.Id).CurrentValue = id;
+        Context.SaveChanges();
+        return existing;
+    }
+ 
     public bool Delete(Guid id)
     {
         var entity = GetById(id);
@@ -44,7 +55,7 @@ public class Repository<T>(TerraNovaContext context) : IRepository<T> where T : 
     }
  
     public bool ExistsById(Guid id) =>
-        _set.Any(e => e.Id == id);
+        _set.Count(e => e.Id == id) > 0;
  
     public bool ExistsByNome(string valor)
     {
@@ -53,7 +64,7 @@ public class Repository<T>(TerraNovaContext context) : IRepository<T> where T : 
         ValidarPropriedadeNome();
  
         var normalizado = valor.Trim().ToLowerInvariant();
-        return _set.Any(e => EF.Property<string>(e, PropriedadeNome).ToLower() == normalizado);
+        return _set.AsNoTracking().Count(e => EF.Property<string>(e, PropriedadeNome).ToLower() == normalizado) > 0;
     }
  
     private void ValidarPropriedadeNome()
