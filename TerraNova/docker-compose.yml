@@ -39,7 +39,7 @@ services:
       dockerfile: TerraNova.API/Dockerfile
       args:
         BUILD_CONFIGURATION: Release
-    image: SEU-DOCKERHUB/terranova-api:v1
+    image: enzookuizumi/terranova-api:v1
     container_name: terranova-api-rm561432
     depends_on:
       postgres-db:
