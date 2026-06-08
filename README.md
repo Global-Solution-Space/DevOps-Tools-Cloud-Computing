@@ -138,7 +138,7 @@ exit
 
 Abaixo estão os comandos `curl` para exercitar a API após o `docker compose up -d --build` estar rodando. A API expõe os endpoints no prefixo `api/` e a interface interativa do Swagger está disponível em `http://localhost:8080`.
 
-> 🔁 **Ordem recomendada**: como as entidades possuem chaves estrangeiras entre si, cadastre primeiro o que não depende de ninguém e vá avançando. Os exemplos abaixo capturam o `id` retornado em cada `CREATE` e reutilizam esse valor automaticamente nos comandos seguintes.
+> 🔁 **Ordem recomendada**: como as entidades possuem chaves estrangeiras entre si, cadastre primeiro as entidades que não precisam de IDs anteriores e vá avançando. Os exemplos abaixo usam `jq` para capturar o `id` retornado em cada `CREATE` e reutilizar esse valor automaticamente nos comandos seguintes.
 
 > 🧰 **Pré-requisito para não digitar IDs manualmente**: execute os comandos em Bash, na mesma sessão de terminal, com `jq` instalado. Na VM Linux criada pelo `azure-cli-script.sh`, o `jq` já é instalado automaticamente; em uma VM Ubuntu manual, use `sudo apt-get update -y && sudo apt-get install -y jq`.
 
@@ -148,7 +148,7 @@ Abaixo estão os comandos `curl` para exercitar a API após o `docker compose up
 API_URL="http://localhost:8080"
 ```
 
-## 1️⃣ Criar um Tipo de Plantação (sem dependências)
+## 1️⃣ Criar um Tipo de Plantação (sem ID anterior)
 
 ```bash
 # CREATE
@@ -175,7 +175,7 @@ curl -fsS -X PUT "$API_URL/api/tipoplantacao/$TIPO_PLANTACAO_ID" \
 
 ```
 
-## 2️⃣ Criar uma Localização (sem dependências)
+## 2️⃣ Criar uma Localização (sem ID anterior)
 
 ```bash
 # CREATE
@@ -204,7 +204,7 @@ curl -fsS -X PUT "$API_URL/api/localizacao/$LOCALIZACAO_ID" \
 
 ```
 
-## 3️⃣ Criar um Produtor (depende apenas de si mesmo; já cadastra o telefone)
+## 3️⃣ Criar um Produtor (sem ID anterior; já cadastra o telefone)
 
 ```bash
 # CREATE (cadastra produtor + telefone na mesma chamada)
@@ -240,7 +240,7 @@ curl -fsS -X PUT "$API_URL/api/produtor/$PRODUTOR_ID" \
 
 ```
 
-## 4️⃣ Criar uma Propriedade (depende de um Produtor + uma Localização)
+## 4️⃣ Criar uma Propriedade (requer ID de Produtor + Localização)
 
 ```bash
 # CREATE
@@ -282,7 +282,7 @@ curl -fsS -X PUT "$API_URL/api/propriedade/$PROPRIEDADE_ID" \
 
 ```
 
-## 5️⃣ Criar um Talhão (depende de TipoPlantação + Propriedade + Localização)
+## 5️⃣ Criar um Talhão (requer ID de TipoPlantação + Propriedade + Localização)
 
 ```bash
 # CREATE
@@ -331,7 +331,7 @@ curl -fsS -X PUT "$API_URL/api/talhao/$TALHAO_ID" \
 
 ```
 
-## 7️⃣ Criar um Tipo de API (sem dependências)
+## 7️⃣ Criar um Tipo de API (sem ID anterior)
 
 ```bash
 # CREATE
@@ -357,7 +357,7 @@ curl -fsS -X PUT "$API_URL/api/tipoapi/$TIPO_API_ID" \
   }'
 ```
 
-## 8️⃣ Criar uma Requisição de API (depende de Tipo API + Talhão)
+## 8️⃣ Criar uma Requisição de API (requer ID de Tipo API + Talhão)
 
 ```bash
 # CREATE
@@ -385,7 +385,7 @@ curl -fsS "$API_URL/api/reqapi/$REQ_API_ID"
 curl -fsS "$API_URL/api/reqapi/talhao/$TALHAO_ID"
 ```
 
-## 9️⃣ Criar um Alerta Agrícola (depende de Talhão)
+## 9️⃣ Criar um Alerta Agrícola (requer ID de Talhão)
 
 ```bash
 # CREATE
