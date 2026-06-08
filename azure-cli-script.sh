@@ -77,6 +77,7 @@ az vm run-command invoke \
       git \
       jq \
       nano \
+      postgresql-client \
       unzip \
       wget
 
@@ -107,6 +108,7 @@ az vm run-command invoke \
     git --version
     curl --version
     jq --version
+    psql --version
     docker --version
     docker buildx version
     docker compose version
