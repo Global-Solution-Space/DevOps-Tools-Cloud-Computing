@@ -27,7 +27,7 @@ Executa a API do TerraNova utilizando diretrizes de segurança, operando com usu
 
 ### 🗄️ Container do Banco de Dados (DB)
 
-Executa o **PostgreSQL 16 com PostGIS 3.4** (imagem `postgis/postgis:16-3.4`), persistindo as informações de todo o ecossistema agrícola em um volume nomeado, garantindo a integridade dos dados independente do ciclo de vida do container. A extensão PostGIS é habilitada automaticamente no primeiro start via `sql/00_postgis_extension.sql`.
+Executa o **PostgreSQL 16 com PostGIS 3.5** (imagem `postgis/postgis:16-3.5`), persistindo as informações de todo o ecossistema agrícola em um volume nomeado, garantindo a integridade dos dados independente do ciclo de vida do container. A extensão PostGIS é habilitada automaticamente no primeiro start via `sql/00_postgis_extension.sql`.
 
 ---
 
@@ -44,7 +44,7 @@ Abaixo está a representação da arquitetura macro da solução na nuvem, detal
 | Configuração                | Valor                                                           |
 | --------------------------- | --------------------------------------------------------------- |
 | Linguagem/Framework         | C# / .NET 10 (ASP.NET Core)                                     |
-| Banco de Dados              | PostgreSQL 16 + PostGIS 3.4 (`postgis/postgis:16-3.4`)         |
+| Banco de Dados              | PostgreSQL 16 + PostGIS 3.5 (`postgis/postgis:16-3.5`)         |
 | Porta Exposta da API        | 8080                                                            |
 | Porta Exposta do Banco      | 5432                                                            |
 | Diretório de Trabalho (App) | `/terranova-app`                                                |
@@ -55,7 +55,7 @@ Abaixo está a representação da arquitetura macro da solução na nuvem, detal
 
 ### Por que PostgreSQL + PostGIS (e não Oracle Spatial)?
 
-- **Instalação trivial** no Docker: a imagem `postgis/postgis:16-3.4` já vem com a extensão PostGIS pré-instalada. Sem necessidade de instalar nada manualmente nem configurar `MDSYS`/`USER_SDO_GEOM_METADATA` no schema.
+- **Instalação trivial** no Docker: a imagem `postgis/postgis:16-3.5` já vem com a extensão PostGIS pré-instalada. Sem necessidade de instalar nada manualmente nem configurar `MDSYS`/`USER_SDO_GEOM_METADATA` no schema.
 - **Integração nativa com .NET**: o provider `Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite` mapeia o tipo `NetTopologySuite.Geometries.Point` para `geometry(Point, 4326)` **automaticamente**, e o EF Core gera a coluna PostGIS na migration sem nenhum script SQL manual.
 - **Performance**: PostGIS é reconhecido mundialmente como o motor espacial mais rápido e eficiente. É o padrão de mercado para startups, aplicações cloud-native e grandes sistemas de GIS.
 - **Custo**: 100% open-source. Oracle Enterprise com Spatial é caríssimo.
@@ -87,17 +87,17 @@ docker compose up -d --build
 Na **primeira execução**, o container `postgres-db-rm561432`:
 1. Cria o banco `terranova` com usuário `terranova_user`.
 2. Executa automaticamente o script `sql/00_postgis_extension.sql` (mapeado em `/docker-entrypoint-initdb.d/`) que faz `CREATE EXTENSION IF NOT EXISTS postgis;`.
+3. A API aplica automaticamente as migrations do Entity Framework no banco PostgreSQL/PostGIS durante o startup.
 
-## 3️⃣ Gerar a migration inicial (Npgsql/PostGIS)
+## 3️⃣ Conferir o status dos containers
 
-A migration Oracle foi removida. Gere a nova migration compatível com PostgreSQL/PostGIS **uma única vez** (ela é commitada no repositório):
+Depois do build, confirme que a API e o banco estão rodando:
 
 ```bash
-# Dentro de TerraNova/
-dotnet ef migrations add Initial --project TerraNova.Infrastructure --startup-project TerraNova.API --output-dir Migrations
+docker compose ps
 ```
 
-> 💡 Se a porta 5432 do host já estiver ocupada (porque o `postgres-db` está rodando), aponte o `dotnet ef` para `localhost:5432` e use a connection string de `appsettings.json` (já aponta para `Host=localhost;Port=5432;Database=terranova;Username=terranova_user;Password=terranova123;`).
+> ℹ️ A migration inicial já está versionada no projeto. Na VM Ubuntu não é necessário instalar o SDK do .NET nem executar `dotnet ef` manualmente para criar as tabelas.
 
 ## 4️⃣ Exibir os Logs dos Containers
 

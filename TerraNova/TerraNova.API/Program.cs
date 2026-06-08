@@ -1,6 +1,8 @@
 using TerraNova.API.Exceptions;
 using TerraNova.API.Extensions;
 using TerraNova.API.Swagger;
+using TerraNova.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 
 namespace TerraNova.API;
@@ -50,6 +52,12 @@ public class Program
         });
 
         var app = builder.Build();
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<TerraNovaContext>();
+            dbContext.Database.Migrate();
+        }
 
         app.UseExceptionHandler();
 
