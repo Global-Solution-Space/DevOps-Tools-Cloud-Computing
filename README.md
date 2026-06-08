@@ -98,7 +98,7 @@ Acesse o terminal interativo do container da API para comprovar o usuário e o d
 
 ```bash
 # Acessa o container da API (nome definido no docker-compose: terranova-api)
-docker container exec -it terranova-api /bin/bash
+docker container exec -it terranova-api-rm561432 /bin/bash
 
 # Comprovação do usuário não privilegiado (deve retornar 'app')
 whoami
@@ -362,7 +362,7 @@ Acesse o terminal do container do banco de dados para validar o relacionamento d
 
 ```bash
 # Acessa o container do banco (nome definido no docker-compose: oracle-db)
-docker container exec -it oracle-db bash
+docker container exec -it oracle-db-rm561432 bash
 
 # Acesse o SQL*Plus do Oracle
 # (credenciais configuradas no docker-compose: terranova_user / terranova123)
