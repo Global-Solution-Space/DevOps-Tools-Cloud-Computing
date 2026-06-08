@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
-#  TerraNova — Provisionamento de Infraestrutura Azure
-#  Projeto: Monitoramento Agrícola com NASA Power + SatVeg
-#  Banco  : PostgreSQL 16 + PostGIS 3.4   |   App: .NET (TerraNova API)
+# TerraNova - Provisionamento de Infraestrutura Azure
+# Projeto: Monitoramento Agricola com NASA Power + SatVeg
+# Banco : PostgreSQL 16 + PostGIS 3.5 | App: .NET (TerraNova API)
 
-set -e
+set -euo pipefail
 
-# Variáveis do Ambiente
+# Variaveis do Ambiente
 RG="rg-terranova"
-LOCATION="eastus"
+LOCATION="canadacentral"
 VNET="vnet-terranova"
 SUBNET="subnet-terranova"
 NSG="nsg-terranova"
 VM="vm-terranova"
+VM_SIZE="Standard_B2ls_v2"
 ADMIN="terranova-adm"
 
 # Grupo de Recursos
@@ -37,13 +38,13 @@ az network nsg create \
   --location "$LOCATION" \
   --name "$NSG"
 
-# Máquina Virtual Ubuntu 22.04 LTS
-echo "[4/6] Criando Máquina Virtual Linux..."
+# Maquina Virtual Ubuntu 22.04 LTS
+echo "[4/6] Criando Maquina Virtual Linux..."
 az vm create \
   --resource-group "$RG" \
   --name "$VM" \
   --image Ubuntu2204 \
-  --size Standard_B2s \
+  --size "$VM_SIZE" \
   --admin-username "$ADMIN" \
   --generate-ssh-keys \
   --output json \
@@ -53,22 +54,22 @@ az vm create \
   --nsg "$NSG"
 
 # Liberar Portas
-echo "[5/6] Liberando portas necessárias..."
-az vm open-port --resource-group "$RG" --name "$VM" --port 22   --priority 1000
+echo "[5/6] Liberando portas necessarias..."
+az vm open-port --resource-group "$RG" --name "$VM" --port 22 --priority 1000
 az vm open-port --resource-group "$RG" --name "$VM" --port 8080 --priority 1010
 az vm open-port --resource-group "$RG" --name "$VM" --port 5432 --priority 1020
 
-# Instalar Docker e Dependências na VM
-echo "[6/6] Instalando Docker e dependências na VM..."
+# Instalar Docker e dependencias na VM
+echo "[6/6] Instalando Docker e dependencias na VM..."
 az vm run-command invoke \
   --resource-group "$RG" \
   --name "$VM" \
   --command-id RunShellScript \
   --scripts "
-    # Atualizar pacotes
+    set -e
+
     sudo apt-get update -y
 
-    # Instalar dependências base
     sudo apt-get install -y \
       ca-certificates \
       curl \
@@ -79,7 +80,6 @@ az vm run-command invoke \
       unzip \
       wget
 
-    # Adicionar repositório oficial do Docker
     sudo install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
       sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -91,7 +91,6 @@ az vm run-command invoke \
       \$(. /etc/os-release && echo \"\$VERSION_CODENAME\") stable\" | \
       sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-    # Instalar Docker Engine + Compose Plugin
     sudo apt-get update -y
     sudo apt-get install -y \
       docker-ce \
@@ -100,15 +99,16 @@ az vm run-command invoke \
       docker-buildx-plugin \
       docker-compose-plugin
 
-    # Iniciar e habilitar no boot
     sudo systemctl start docker
     sudo systemctl enable docker
 
-    # Adicionar admin ao grupo docker (sem precisar de sudo)
     sudo usermod -aG docker $ADMIN
 
-    # Verificar instalação
+    git --version
+    curl --version
+    jq --version
     docker --version
+    docker buildx version
     docker compose version
 
     echo '============================================'
@@ -125,10 +125,10 @@ PUBLIC_IP=$(az vm show \
   --output tsv)
 
 echo "======================================================"
-echo "  Provisionamento concluído com sucesso!"
-echo "  IP Público da VM  : $PUBLIC_IP"
+echo "  Provisionamento concluido com sucesso!"
+echo "  IP Publico da VM  : $PUBLIC_IP"
 echo "  Acesse via SSH    : ssh $ADMIN@$PUBLIC_IP"
-echo "  API (após deploy) : http://$PUBLIC_IP:8080"
-echo "  Swagger           : http://$PUBLIC_IP:8080"
-echo "  Postgres (externo): $PUBLIC_IP:5432  (db: terranova / user: terranova_user)"
+echo "  API               : http://$PUBLIC_IP:8080"
+echo "  Swagger           : http://$PUBLIC_IP:8080/index.html"
+echo "  Postgres externo  : $PUBLIC_IP:5432 (db: terranova / user: terranova_user)"
 echo "======================================================"

@@ -35,8 +35,7 @@ Executa o **PostgreSQL 16 com PostGIS 3.5** (imagem `postgis/postgis:16-3.5`), p
 
 Abaixo está a representação da arquitetura macro da solução na nuvem, detalhando a comunicação entre os containers, exposição de portas, volumes e o fluxo de requisições.
 
-> ⚠️ **[COLOQUE AQUI O LINK DA IMAGEM DO SEU DIAGRAMA DRAW.IO ATUALIZADO]**
-
+![desenho macro](docs/terranova.drawio.png)
 ---
 
 ## 🛠️ Tecnologias e Configurações dos Containers
