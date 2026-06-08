@@ -2,13 +2,6 @@
 #  Banco  : PostgreSQL 16 + PostGIS 3.5  (postgis/postgis:16-3.5)
 #  App    : TerraNova API (.NET 10  |  Npgsql EF Core v10 compat)
 #  Rede   : terranova_net (bridge compartilhada)
-#
-#  Por que PostGIS?
-#  - Imagem já vem com PostGIS pré-instalado (sem instalar nada extra).
-#  - O provider Npgsql/NetTopologySuite infere a coluna `geometry(Point, 4326)`
-#    e injeta as views de metadados automaticamente — sem precisar de
-#    `USER_SDO_GEOM_METADATA` manual após cada `CreateTable`.
-#  - 100% open-source (vs Oracle Enterprise com Spatial, que é caríssimo).
 
 services:
   postgres-db:
