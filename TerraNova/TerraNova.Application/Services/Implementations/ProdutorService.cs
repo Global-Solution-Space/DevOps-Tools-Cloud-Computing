@@ -53,42 +53,40 @@ public sealed class ProdutorService(
         if (emailExistente is not null && emailExistente.Id != id)
             throw new InvalidOperationException("Já existe um produtor cadastrado com este e-mail.");
 
-        var entity = new Produtor(request.Nome, request.Email, request.Senha);
-        produtorRepository.Update(id, entity);
+        var produtor = new Produtor(request.Nome, request.Email, request.Senha);
 
-        var telefone = AtualizarTelefoneContato(id, request.TelefoneContato, existing.TelefoneDetalhado?.Id);
-        entity.AtribuirTelefone(telefone);
-
-        return ProdutorResponse.FromDomain(entity);
-    }
-
-    public bool Delete(Guid id) => produtorRepository.Delete(id);
-
-    private Telefone AtualizarTelefoneContato(Guid produtorId, string telefoneContato, Guid? telefoneId)
-    {
-        var (ddd, numero) = ExtrairTelefone(telefoneContato);
-        if (telefoneRepository.ExistsByDddNumeroExceptProdutorId(ddd, numero, produtorId))
+        var (ddd, numero) = ExtrairTelefone(request.TelefoneContato);
+        if (telefoneRepository.ExistsByDddNumeroExceptProdutorId(ddd, numero, id))
             throw new InvalidOperationException("Este DDD e número já estão cadastrados para outro telefone.");
 
-        var telefone = new Telefone(ddd, numero, produtorId);
+        var telefone = new Telefone(ddd, numero, id);
 
-        if (telefoneId.HasValue)
+        produtorRepository.Update(id, produtor);
+
+        if (existing.TelefoneDetalhado?.Id is Guid telefoneId)
         {
-            telefoneRepository.Update(telefoneId.Value, telefone);
+            telefoneRepository.Update(telefoneId, telefone);
         }
         else
         {
             telefoneRepository.Add(telefone);
         }
 
-        return telefone;
+        produtor.AtribuirTelefone(telefone);
+        return ProdutorResponse.FromDomain(produtor);
     }
+
+    public bool Delete(Guid id) => produtorRepository.Delete(id);
 
     private static (string Ddd, string Numero) ExtrairTelefone(string telefoneContato)
     {
         var telefoneLimpo = new string(telefoneContato.Where(char.IsDigit).ToArray());
-        var ddd = telefoneLimpo.Substring(0, 2);
-        var numero = telefoneLimpo.Substring(2);
+
+        if (telefoneLimpo.Length is not (10 or 11))
+            throw new InvalidOperationException("O telefone deve conter DDD e numero com 10 ou 11 digitos.");
+
+        var ddd = telefoneLimpo[..2];
+        var numero = telefoneLimpo[2..];
 
         return (ddd, numero);
     }
