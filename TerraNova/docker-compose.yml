@@ -1,6 +1,6 @@
 #  TerraNova — Docker Compose
 #  Banco  : Oracle XE 21c  (gvenzl/oracle-xe:21-slim)
-#  App    : TerraNova API (.NET  |  Oracle EF Core v19 compat)
+#  App    : TerraNova API (.NET 10  |  Oracle EF Core v10 compat)
 #  Rede   : terranova_net (bridge compartilhada)
 
 services:
@@ -12,7 +12,6 @@ services:
       ORACLE_PASSWORD: oracle_terranova
       APP_USER: terranova_user
       APP_USER_PASSWORD: terranova123
-      SatVegApiToken: "Bearer e97dab05-eedc-39b9-a3fd-fa83cb5fef5e"
     volumes:
       - terranova_oracle_data:/opt/oracle/oradata
     ports:
@@ -29,7 +28,7 @@ services:
   terranova-api:
     build:
       context: .
-      dockerfile: src/TerraNova.API/Dockerfile
+      dockerfile: TerraNova.API/Dockerfile
       args:
         BUILD_CONFIGURATION: Release
     image: SEU-DOCKERHUB/terranova-api:v1
@@ -44,6 +43,7 @@ services:
       ASPNETCORE_HTTP_PORTS: "8080"
 
       ConnectionStrings__TerraNovaOracle: "User Id=terranova_user;Password=terranova123;Data Source=oracle-db:1521/XEPDB1;"
+      SatVegApiToken: "Bearer e97dab05-eedc-39b9-a3fd-fa83cb5fef5e"
     networks:
       - terranova_net
     restart: on-failure

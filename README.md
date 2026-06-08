@@ -4,7 +4,7 @@
 
 O **TerraNova** é uma solução tecnológica voltada para a gestão do agronegócio, permitindo o cadastro e monitoramento estruturado de **Produtores**, **Propriedades**, **Talhões** e **Tipos de Plantação**.
 
-Esta entrega contempla a modernização da infraestrutura da API (desenvolvida em **.NET 8**) através da conteinerização com **Docker**. O ambiente foi projetado para rodar de forma isolada na nuvem, contendo dois serviços principais integrados em uma mesma rede virtual (**Bridge**):
+Esta entrega contempla a modernização da infraestrutura da API (desenvolvida em **.NET 10**) através da conteinerização com **Docker**. O ambiente foi projetado para rodar de forma isolada na nuvem, contendo dois serviços principais integrados em uma mesma rede virtual (**Bridge**):
 
 ### 📦 Container da Aplicação (App)
 
@@ -28,12 +28,14 @@ Abaixo está a representação da arquitetura macro da solução na nuvem, detal
 
 | Configuração                | Valor                                                           |
 | --------------------------- | --------------------------------------------------------------- |
-| Linguagem/Framework         | C# / .NET 8 (ASP.NET Core)                                      |
-| Banco de Dados              | Oracle Database 19c                                             |
+| Linguagem/Framework         | C# / .NET 10 (ASP.NET Core)                                     |
+| Banco de Dados              | Oracle Database XE 21c (`gvenzl/oracle-xe:21-slim`)             |
 | Porta Exposta da API        | 8080                                                            |
 | Diretório de Trabalho (App) | `/terranova-app`                                                |
 | Usuário de Execução (App)   | `app` (Não-root)                                                |
-| Variáveis de Ambiente       | `ASPNETCORE_ENVIRONMENT` e `ConnectionStrings__TerraNovaOracle` |
+| Container da API            | `terranova-api`                                                 |
+| Container do Banco          | `oracle-db`                                                     |
+| Variáveis de Ambiente       | `ASPNETCORE_ENVIRONMENT`, `ConnectionStrings__TerraNovaOracle` e `SatVegApiToken` |
 
 ---
 
@@ -48,7 +50,10 @@ Abra o terminal e execute o comando abaixo para baixar o projeto diretamente da 
 ```bash
 git clone https://github.com/Global-Solution-Space/DevOps-Tools-Cloud-Computing.git
 cd DevOps-Tools-Cloud-Computing
+cd TerraNova
 ```
+
+> ℹ️ O `docker-compose.yml` está versionado dentro da pasta `TerraNova/`, por isso entramos nela antes de executar os comandos do Docker.
 
 ## 2️⃣ Executar a Solução em Segundo Plano (Background)
 
@@ -77,8 +82,8 @@ Conforme os requisitos do projeto, abaixo estão os comandos para validar a estr
 Acesse o terminal interativo do container da API para comprovar o usuário e o diretório de trabalho configurados no Dockerfile:
 
 ```bash
-# Substitua o RM pelo número correto do representante
-docker container exec -it app-rm[INSERIR_RM_AQUI] /bin/bash
+# Acessa o container da API (nome definido no docker-compose: terranova-api)
+docker container exec -it terranova-api /bin/bash
 
 # Comprovação do usuário não privilegiado (deve retornar 'app')
 whoami
@@ -98,12 +103,12 @@ exit
 Acesse o terminal do container do banco de dados para validar o relacionamento do CRUD de gestão agrícola:
 
 ```bash
-# Substitua o RM pelo número correto do representante
-docker container exec -it db-rm[INSERIR_RM_AQUI] bash
+# Acessa o container do banco (nome definido no docker-compose: oracle-db)
+docker container exec -it oracle-db bash
 
 # Acesse o SQL*Plus do Oracle
-# (substitua pelas credenciais configuradas no docker-compose)
-sqlplus system/SuaSenhaOracle@//localhost:1521/XEPDB1
+# (credenciais configuradas no docker-compose: terranova_user / terranova123)
+sqlplus terranova_user/terranova123@//localhost:1521/XEPDB1
 
 # Execute consultas para comprovar o relacionamento do domínio agrícola
 SELECT * FROM PRODUTOR;

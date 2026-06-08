@@ -54,9 +54,9 @@ az vm create \
 
 # Liberar Portas
 echo "[5/6] Liberando portas necessárias..."
-az vm open-port --resource-group "$RG" --name "$VM" --port 22   --priority 1000   # SSH
-az vm open-port --resource-group "$RG" --name "$VM" --port 8080 --priority 1010   # TerraNova API
-az vm open-port --resource-group "$RG" --name "$VM" --port 1521 --priority 1020   # Oracle XE
+az vm open-port --resource-group "$RG" --name "$VM" --port 22   --priority 1000
+az vm open-port --resource-group "$RG" --name "$VM" --port 8080 --priority 1010
+az vm open-port --resource-group "$RG" --name "$VM" --port 1521 --priority 1020
 
 # Instalar Docker e Dependências na VM
 echo "[6/6] Instalando Docker e dependências na VM..."
@@ -116,12 +116,7 @@ az vm run-command invoke \
   "
 
 # Exibir resumo final
-PUBLIC_IP=$(az vm show \
-  --resource-group "$RG" \
-  --name "$VM" \
-  --show-details \
-  --query publicIps \
-  --output tsv)
+PUBLIC_IP=$(az vm show \ --resource-group "$RG" \ --name "$VM" \ --show-details \ --query publicIps \ --output tsv)
 
 echo "======================================================"
 echo "  Provisionamento concluído com sucesso!"
