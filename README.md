@@ -27,7 +27,7 @@ Executa a API do TerraNova utilizando diretrizes de segurança, operando com usu
 
 ### 🗄️ Container do Banco de Dados (DB)
 
-Executa o **PostgreSQL 16 com PostGIS 3.5** (imagem `postgis/postgis:16-3.5`), persistindo as informações de todo o ecossistema agrícola em um volume nomeado, garantindo a integridade dos dados independente do ciclo de vida do container. A extensão PostGIS é habilitada automaticamente no primeiro start via `sql/00_postgis_extension.sql`.
+Executa o **PostgreSQL 16 com PostGIS 3.5** (`postgis/postgis:16-3.5`), persistindo as informações de todo o ecossistema agrícola em um volume nomeado, garantindo a integridade dos dados independente do ciclo de vida do container. A extensão PostGIS é habilitada automaticamente no primeiro start via `sql/00_postgis_extension.sql`.
 
 ---
 
@@ -36,6 +36,9 @@ Executa o **PostgreSQL 16 com PostGIS 3.5** (imagem `postgis/postgis:16-3.5`), p
 Abaixo está a representação da arquitetura macro da solução na nuvem, detalhando a comunicação entre os containers, exposição de portas, volumes e o fluxo de requisições.
 
 ![desenho macro](docs/terranova.drawio.png)
+
+[Link Drawio](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=terranova.drawio&dark=auto#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1n18_Amulo9bCftkWgO-CSMgIr9295Hhe%26export%3Ddownload)
+
 ---
 
 ## 🛠️ Tecnologias e Configurações dos Containers
@@ -131,6 +134,54 @@ ls -la
 exit
 ```
 
+## Print Script Azure
+
+![Azure Script pt1](docs/rodando_script_azure.png)
+
+## Print Script Azure Finalizado
+
+![Azure Script pt2](docs/rodando_script_azure02.png)
+
+## Print Azure Resource Group
+
+![Azure RG](docs/azure_rg.png)
+
+## Print Azure Resource Group 2 
+
+![Azure RG2](docs/azure_rg2.png)
+
+## Print Azure VM 
+
+![Azure VM](docs/azure_vm.png)
+
+## Print Acessando VM
+
+![Acessando VM](docs/acessando_vm.png)
+
+## Print docker compose up -d build
+
+![Docker compose](docs/docker_compose_up_build.png)
+
+## Print docker compose FINALIZADO!!
+
+![Docker Compose Finalizado](docs/docker_compose_finalizado.png)
+
+## Print docker compose logs -f
+
+![Docker Logs](docs/docker%20logs.png)
+
+## Print Container
+
+![Docker Container](docs/Containers%20Rodando.png)
+
+## Print Variáveis de Ambiente
+
+![variaveis_ambiente](docs/variaveis_ambiente.png)
+
+## Print Swagger
+
+![swagger](docs/Swagger.png)
+
 ---
 
 # 🧪 Comandos CRUD
@@ -143,8 +194,39 @@ Abaixo estão os comandos `curl` para exercitar a API após o `docker compose up
 
 > 🌍 Substitua `localhost:8080` pelo IP público da VM (`$PUBLIC_IP:8080`) caso esteja executando no Azure.
 
+## Prints dos Comandos
+
+### Testes Anterioes com POST Produtor
+![Comandos CRUD Produtor](docs/crud_usuario_anterior.png)
+
+![Swagger Produtor](docs/swagger_get_produtor.png)
+
+## Comandos CRUD com Banco de dados
+
+### Post Produtor
+
+![Imagem 01](docs/crud%20produtor.png)
+
+## Post Tipo Platancao
+
+![Imagem 02](docs/crud%20tipo%20platancao.png)
+
+## Post Localizacao
+
+![Imagem 03](docs/crud%20localizacao.png)
+
+## Prova Banco de Dados
+
+![Imagem 04](docs/delete%20dados%20e%20banco.png)
+> Obs: Os dados que estão no banco é por conta que eu já tinha criado dados antes, mas os dados que criei recentemente foram removidos!! No caso era para ter 2 de cada e como removemos, agora só tem 1!
+
+![Imagem 05](docs/banco%20de%20dados%20VM.png)
+> Obs: aqui a prova!! Quando estava testando antes (usuário no casokkkk)!
+
+## Link com IP da VM Azure
+
 ```bash
-API_URL="http://localhost:8080"
+API_URL="http://20.116.17.249:8080/"
 ```
 
 ## 1️⃣ Criar um Tipo de Plantação (sem ID anterior)
