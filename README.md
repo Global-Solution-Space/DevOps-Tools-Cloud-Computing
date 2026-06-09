@@ -1,5 +1,26 @@
 # 🌾 TerraNova API - DevOps Tools & Cloud Computing
 
+## 📑 Índice
+
+- [👥 Integrantes](#-integrantes)
+- [📂 Repositório GitHub](#-repositório-github)
+- [🚀 Descrição da Solução Proposta](#-descrição-da-solução-proposta)
+  - [📦 Container da Aplicação (App)](#-container-da-aplicação-app)
+  - [🗄️ Container do Banco de Dados (DB)](#️-container-do-banco-de-dados-db)
+- [🏗️ Desenho Macro da Arquitetura](#️-desenho-macro-da-arquitetura)
+- [🛠️ Tecnologias e Configurações dos Containers](#️-tecnologias-e-configurações-dos-containers)
+- [🚀 Como Executar o Projeto (How To)](#-como-executar-o-projeto-how-to)
+  - [1️⃣ Clonar o Repositório](#1️⃣-clonar-o-repositório)
+  - [2️⃣ Subir Postgres+PostGIS e a API](#2️⃣-subir-postgrespostgis-e-a-api)
+  - [3️⃣ Conferir o status dos containers](#3️⃣-conferir-o-status-dos-containers)
+  - [4️⃣ Exibir os Logs dos Containers](#4️⃣-exibir-os-logs-dos-containers)
+- [🔍 Evidências de Execução (Validação)](#-evidências-de-execução-validação)
+- [🧪 Comandos CRUD](#-comandos-crud)
+- [📋 Tabela Resumo de Endpoints](#-tabela-resumo-de-endpoints)
+- [📌 Validação do Banco de Dados e Persistência](#-validação-do-banco-de-dados-e-persistência-postgresql--postgis)
+
+---
+
 
 ## 👥 Integrantes
 
