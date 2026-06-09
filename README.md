@@ -1,15 +1,58 @@
 # 🌾 TerraNova API - DevOps Tools & Cloud Computing
 
 
-# 👥 Integrantes da Equipe
+## 👥 Integrantes
 
-| Nome | RM |
-|------|------|
-| Enzo Okuizumi Miranda de Souza | 561432 |
-| Gustavo Keiji Okada | 563428 |
-| Lucas Barros Gouveia | 566422 |
-| Luna de Carvalho Guimarães | 562290 |
-| Milton Jakson de Sousa Marcelino | 564836 |
+<table>
+<tr>
+<th>Nome</th>
+<th>RM</th>
+<th>Turma</th>
+<th>GitHub</th>
+<th>LinkedIn</th>
+</tr>
+
+<tr>
+<td>Enzo Okuizumi</td>
+<td>561432</td>
+<td>2TDSPG</td>
+<td><a href="https://github.com/EnzoOkuizumiFiap">EnzoOkuizumiFiap</a></td>
+<td><a href="https://www.linkedin.com/in/enzo-okuizumi-b60292256/">Enzo Okuizumi</a></td>
+</tr>
+
+<tr>
+<td>Lucas Barros Gouveia</td>
+<td>566422</td>
+<td>2TDSPG</td>
+<td><a href="https://github.com/LuzBGouveia">LuzBGouveia</a></td>
+<td><a href="https://www.linkedin.com/in/lucas-barros-gouveia-09b147355/">Lucas Barros Gouveia</a></td>
+</tr>
+
+<tr>
+<td>Milton Marcelino</td>
+<td>564836</td>
+<td>2TDSPG</td>
+<td><a href="https://github.com/MiltonMarcelino">MiltonMarcelino</a></td>
+<td><a href="http://linkedin.com/in/milton-marcelino-250298142">Milton Marcelino</a></td>
+</tr>
+
+<tr>
+<td>Luna de Carvalho Guimarães</td>
+<td>562290</td>
+<td>2TDSPG</td>
+<td><a href="https://github.com/lunaguima">lunaguima</a></td>
+<td><a href="https://www.linkedin.com/in/luna-m-guimar%C3%A3es-1850ab173/">Luna M. Guimarães</a></td>
+</tr>
+
+<tr>
+<td>Gustavo Okada</td>
+<td>563428</td>
+<td>2TDSPG</td>
+<td><a href="https://github.com/Gdev3356">GustavoOkada7268</a></td>
+<td><a href="https://www.linkedin.com/in/gustavo-okada-53a3b8359/">Gustavo Okada</a></td>
+</tr>
+
+</table>
 
 ## 📂 Repositório GitHub
 
@@ -186,7 +229,7 @@ exit
 
 # 🧪 Comandos CRUD
 
-Abaixo estão os comandos `curl` para exercitar a API após o `docker compose up -d --build` estar rodando. A API expõe os endpoints no prefixo `api/` e a interface interativa do Swagger está disponível em `http://localhost:8080`.
+Abaixo estão os comandos `curl` para exercitar a API após o `docker compose up -d --build` estar rodando. A API expõe os endpoints no prefixo `api/` e a interface interativa do Swagger está disponível em `http://20.116.17.249:8080/index.html`.
 
 > 🔁 **Ordem recomendada**: como as entidades possuem chaves estrangeiras entre si, cadastre primeiro as entidades que não precisam de IDs anteriores e vá avançando. Os exemplos abaixo usam `jq` para capturar o `id` retornado em cada `CREATE` e reutilizar esse valor automaticamente nos comandos seguintes.
 
@@ -199,6 +242,7 @@ Abaixo estão os comandos `curl` para exercitar a API após o `docker compose up
 ### Testes Anterioes com POST Produtor
 ![Comandos CRUD Produtor](docs/crud_usuario_anterior.png)
 
+### Testes Anteriores Swagger Produtor
 ![Swagger Produtor](docs/swagger_get_produtor.png)
 
 ## Comandos CRUD com Banco de dados
@@ -221,7 +265,7 @@ Abaixo estão os comandos `curl` para exercitar a API após o `docker compose up
 > Obs: Os dados que estão no banco é por conta que eu já tinha criado dados antes, mas os dados que criei recentemente foram removidos!! No caso era para ter 2 de cada e como removemos, agora só tem 1!
 
 ![Imagem 05](docs/banco%20de%20dados%20VM.png)
-> Obs: aqui a prova!! Quando estava testando antes (usuário no casokkkk)!
+> Obs: aqui a prova!! Quando estava testando antes (usuário no caso!)
 
 ## Link com IP da VM Azure
 
