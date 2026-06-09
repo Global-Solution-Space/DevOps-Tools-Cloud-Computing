@@ -240,7 +240,7 @@ Abaixo estão os comandos `curl` para exercitar a API após o `docker compose up
 ## Prints dos Comandos
 
 ### Testes Anterioes com POST Produtor
-![Comandos CRUD Produtor](docs/crud_usuario_anterior.png)
+![Comandos CRUD Produtor](docs/crud_produtor_anterior.png)
 
 ### Testes Anteriores Swagger Produtor
 ![Swagger Produtor](docs/swagger_get_produtor.png)
