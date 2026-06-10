@@ -77,7 +77,7 @@
 
 ## 📂 Repositório GitHub e Links Importantes
 
-[Repositório GitHub](https://github.com/Global-Solution-Space/DevOps-Tools-Cloud-Computing) | [Vídeo Demonstrativo]() | [Documentação PDF]()
+[Repositório GitHub](https://github.com/Global-Solution-Space/DevOps-Tools-Cloud-Computing) | [Link Vídeo DevOps](https://www.youtube.com/watch?v=lvmB7wX_3ZY) | [Documentação PDF](docs/Documentação%20DevOps%20-%20Terra%20Nova%20(Space%20Five).pdf)
 
 ## 🚀 Descrição da Solução Proposta
 
