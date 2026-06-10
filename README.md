@@ -75,9 +75,9 @@
 
 </table>
 
-## 📂 Repositório GitHub
+## 📂 Repositório GitHub e Links Importantes
 
-[Repositório GitHub](https://github.com/Global-Solution-Space/DevOps-Tools-Cloud-Computing) | [Vídeo Demonstrativo]() 
+[Repositório GitHub](https://github.com/Global-Solution-Space/DevOps-Tools-Cloud-Computing) | [Vídeo Demonstrativo]() | [Documentação PDF]()
 
 ## 🚀 Descrição da Solução Proposta
 
@@ -282,11 +282,9 @@ Abaixo estão os comandos `curl` para exercitar a API após o `docker compose up
 
 ## Prova Banco de Dados
 
-![Imagem 04](docs/delete%20dados%20e%20banco.png)
-> Obs: Os dados que estão no banco é por conta que eu já tinha criado dados antes, mas os dados que criei recentemente foram removidos!! No caso era para ter 2 de cada e como removemos, agora só tem 1!
+![Imagem 04](docs/banco%20de%20dados%20VM.png)
 
-![Imagem 05](docs/banco%20de%20dados%20VM.png)
-> Obs: aqui a prova!! Quando estava testando antes (usuário no caso!)
+![Imagem 05](docs/delete%20dados%20e%20banco.png)
 
 ## Link com IP da VM Azure
 
@@ -727,7 +725,6 @@ curl -fsS -X DELETE "$API_URL/api/tipoplantacao/$TIPO_PLANTACAO_ID"
 | `GET`     | `/api/dadotemporal/talhao/{talhaoId}`             | Lista dados temporais por talhão       |
 | `GET`     | `/api/dadotemporal/req-api/{reqApiId}`            | Lista dados temporais por requisição   |
 
-> 💡 **Dica**: você também pode usar a interface gráfica do Swagger em `http://localhost:8080` para testar todas as rotas com formulários automáticos.
 
 ---
 
